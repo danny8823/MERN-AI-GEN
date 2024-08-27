@@ -73,7 +73,7 @@ const login = asyncHandler(async(req,res)=> {
     // GENERATE TOKEN
     const token = jwt.sign({id: user?._id},process.env.JWT_SECRET,{expiresIn: '3d'}
     )
-    
+
     // SET THE TOKEN INTO THE COOKIE (HTTP ONLY)
     res.cookie('token', token,{
         httpOnly: true,
@@ -90,11 +90,34 @@ const login = asyncHandler(async(req,res)=> {
         email: user?.email
     })
 })
+
 // ! ----              LOGOUT          ----
+const logout = asyncHandler(async(req,res) => {
+    res.cookie('token', '', {maxAge:1})
+    res.status(200).json({
+        message: 'Logout successful....'
+    })
+})
 // ! ----              PROFILE         ----
+const userProfile = asyncHandler(async(req,res) => {
+    console.log('user', req.user)
+    const id = "66cd1430730c18a2de431041"
+    const user = await User.findById(id).select('-password')
+    if(user) {
+        res.status(200).json({
+            status: 200,
+            user
+        })
+    } else {
+        res.status(404)
+        throw new Error('User not found')
+    }
+})
 // ! ----     CHECK USER AUTH STATUS   ----
 
 module.exports = {
     register,
-    login
+    login,
+    logout,
+    userProfile
 }
