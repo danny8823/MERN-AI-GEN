@@ -1,56 +1,66 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-// SCHEMA
-const userSchema = new mongoose.Schema({
+//Schema
+const userSchema = new mongoose.Schema(
+  {
     username: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
+    },
+    trialPeriod: {
+      type: Number,
+      default: 3, //3 days
     },
     trialActive: {
-        type: String,
-        required: true
+      type: Boolean,
+      default: true,
     },
     trialExpires: {
-        type: Date
+      type: Date,
     },
-    subscription: {
-        type: String,
-        enum: ['Trial','Free','Basic','Premium']
+    subscriptionPlan: {
+      type: String,
+      enum: ["Trial", "Free", "Basic", "Premium"],
+      default: "Trial",
     },
     apiRequestCount: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 0,
     },
     monthlyRequestCount: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 100, //100 credit //3 days
     },
     nextBillingDate: Date,
     payments: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Payment'
-        }
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Payment",
+      },
     ],
-    history: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'History'
-        }
-    ]
-},{
-    timestamps: true
-})
+    contentHistory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ContentHistory",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
-//* COMPILE TO FROM THE MODEL */
-const User = mongoose.mongo('User', userSchema);
+//! Compile to form the model
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
